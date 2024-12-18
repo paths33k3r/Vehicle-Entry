@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Entry Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 400px;
+        }
+        label {
+            margin-top: 10px;
+            display: block;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 15px;
+        }
+        #entryList {
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Vehicle Entry Form</h2>
+<form id="vehicleForm">
+    <label for="customerName">CUSTOMER NAME:</label>
+    <input type="text" id="customerName" name="customerName" required>
+
+    <label for="icNo">IC NO.:</label>
+    <input type="text" id="icNo" name="icNo" required>
+
+    <label for="carBikeModel">CAR/BIKE MODEL:</label>
+    <input type="text" id="carBikeModel" name="carBikeModel" required>
+
+    <label for="chassisNo">CHASSIS NO.:</label>
+    <input type="text" id="chassisNo" name="chassisNo" required>
+
+    <label for="yearBuild">YEAR BUILD:</label>
+    <input type="number" id="yearBuild" name="yearBuild" required>
+
+    <label for="registrationNumber">REGISTRATION NUMBER:</label>
+    <input type="text" id="registrationNumber" name="registrationNumber" required>
+
+    <label for="carOwnership">CAR GRANT / GREEN CARD OWNERSHIP:</label>
+    <input type="text" id="carOwnership" name="carOwnership" required>
+
+    <label for="addressLocation">ADDRESS / LOCATION OF VEHICLE:</label>
+    <input type="text" id="addressLocation" name="addressLocation" required>
+
+    <label for="carDealerPrice">CAR DEALER PRICE (RM):</label>
+    <input type="number" id="carDealerPrice" name="carDealerPrice" required>
+
+    <label for="otherPlatformPrice">OTHER PLATFORM EST. PRICE:</label>
+    <input type="number" id="otherPlatformPrice" name="otherPlatformPrice" required>
+
+    <label for="debtorOutstanding">DEBTOR OUTSTANDING DUE (RM):</label>
+    <input type="number" id="debtorOutstanding" name="debtorOutstanding" required>
+
+    <label for="actionInitiative">ACTION INITIATIVE:</label>
+    <select id="actionInitiative" name="actionInitiative" required>
+        <option value="">Select Action Initiative</option>
+        <option value="TO SELL">TO SELL</option>
+        <option value="TO SCRAP">TO SCRAP</option>
+        <option value="ON HOLD">ON HOLD</option>
+    </select>
+
+    <label for="remarks">REMARKS:</label>
+    <input type="text" id="remarks" name="remarks">
+
+    <button type="submit">Submit</button>
+</form>
+
+<div id="entryList">
+    <h2>Submitted Entries:</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>CUSTOMER NAME / IC NO.</th>
+                <th>CAR/BIKE MODEL / CHASSIS NO. / YEAR BUILD / REGISTRATION NUMBER</th>
+                <th>CAR GRANT / GREEN CARD OWNERSHIP / ADDRESS / LOCATION OF VEHICLE</th>
+                <th>CAR DEALER PRICE (RM) / OTHER PLATFORM PRICE (RM) / DEBTOR OUTSTANDING (RM)</th>
+                <th>ACTION INITIATIVE / REMARKS</th>
+            </tr>
+        </thead>
+        <tbody id="entriesBody">
+            <!-- Entries will be appended here -->
+        </tbody>
+    </table>
+</div>
+
+<button id="downloadExcel">Download as Excel</button>
+
+<script>
+    const entries = []; // Store entries to allow downloading
+
+    document.getElementById('vehicleForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevents the default form submission
+
+        // Collect data from form inputs
+        const formData = {
+            "CUSTOMER NAME": document.getElementById('customerName').value,
+            "IC NO.": document.getElementById('icNo').value,
+            "CAR/BIKE MODEL": document.getElementById('carBikeModel').value,
+            "CHASSIS NO.": document.getElementById('chassisNo').value,
+            "YEAR BUILD": document.getElementById('yearBuild').value,
+            "REGISTRATION NUMBER": document.getElementById('registrationNumber').value,
+            "CAR GRANT / GREEN CARD": document.getElementById('carOwnership').value,
+            "ADDRESS": document.getElementById('addressLocation').value,
+            "CAR DEALER PRICE (RM)": Number(document.getElementById('carDealerPrice').value),
+            "OTHER PLATFORM PRICE (RM)": Number(document.getElementById('otherPlatformPrice').value),
+            "DEBTOR OUTSTANDING (RM)": Number(document.getElementById('debtorOutstanding').value),
+            "ACTION INITIATIVE": document.getElementById('actionInitiative').value,
+            "REMARKS": document.getElementById('remarks').value
+        };
+
+        // Create a new table row for the entry
+        const entriesBody = document.getElementById('entriesBody');
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${formData["CUSTOMER NAME"]} / ${formData["IC NO."]}</td>
+            <td>${formData["CAR/BIKE MODEL"]} / ${formData["CHASSIS NO."]} / ${formData["YEAR BUILD"]} / ${formData["REGISTRATION NUMBER"]}</td>
+            <td>${formData["CAR GRANT / GREEN CARD"]} / ${formData["ADDRESS"]}</td>
+            <td>${formData["CAR DEALER PRICE (RM)"]} / ${formData["OTHER PLATFORM PRICE (RM)"]} / ${formData["DEBTOR OUTSTANDING (RM)"]}</td>
+            <td>${formData["ACTION INITIATIVE"]} / ${formData["REMARKS"]}</td>
+        `;
+
+        // Append the new row to the entries body
+        entriesBody.appendChild(row);
+
+        // Save the entry for download
+        entries.push(formData);
+
+        // Optionally reset form after submission
+        document.getElementById('vehicleForm').reset();
+    });
+
+    document.getElementById('downloadExcel').addEventListener('click', function() {
+        // Prepare data for Excel
+        let csvContent = "data:text/csv;charset=utf-8,";
+
+        // Create header
+        const header = [
+            "CUSTOMER NAME / IC NO.",
+            "CAR/BIKE MODEL / CHASSIS NO. / YEAR BUILD / REGISTRATION NUMBER",
+            "CAR GRANT / GREEN CARD OWNERSHIP / ADDRESS / LOCATION OF VEHICLE",
+            "CAR DEALER PRICE (RM) / OTHER PLATFORM PRICE (RM) / DEBTOR OUTSTANDING (RM)",
+            "ACTION INITIATIVE / REMARKS"
+        ];
+        csvContent += header.join(",") + "\n";
+
+        // Create rows
+        entries.forEach(entry => {
+            const row = [
+                `${entry["CUSTOMER NAME"]} / ${entry["IC NO."]}`,
+                `${entry["CAR/BIKE MODEL"]} / ${entry["CHASSIS NO."]} / ${entry["YEAR BUILD"]} / ${entry["REGISTRATION NUMBER"]}`,
+                `${entry["CAR GRANT / GREEN CARD"]} / ${entry["ADDRESS"]}`,
+                `${entry["CAR DEALER PRICE (RM)"]} / ${entry["OTHER PLATFORM PRICE (RM)"]} / ${entry["DEBTOR OUTSTANDING (RM)"]}`,
+                `${entry["ACTION INITIATIVE"]} / ${entry["REMARKS"]}`
+            ];
+            csvContent += row.join(",") + "\n";
+        });
+
+        // Create a link element and trigger download
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "vehicle_entries.csv");
+        document.body.appendChild(link); // Required for FF
+
+        link.click(); // This will download the data file named "vehicle_entries.csv"
+        document.body.removeChild(link); // Clean up
+    });
+</script>
+
+</body>
+</html>
