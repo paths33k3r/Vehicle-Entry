@@ -109,7 +109,6 @@
 
 <div class="sample-csv">
     <h3>Sample CSV Format</h3>
-    
     <button id="downloadSampleCsv">Download Sample CSV</button>
 </div>
 
@@ -230,25 +229,45 @@
     function parseCSV(text) {
         const rows = text.split("\n").map(row => row.split(","));
         
-        // Skip the header row
+        // Clear existing entries in the table
+        const entriesBody = document.getElementById('entriesBody');
+        entriesBody.innerHTML = ''; // Clear existing entries
+
+        // Skip the header row and process the data
         for (let i = 1; i < rows.length; i++) {
             const row = rows[i];
-            if (row.length === 12) { // Ensure we have all fields
-                document.getElementById('customerName').value = row[0];
-                document.getElementById('icNo').value = row[1];
-                document.getElementById('carBikeModel').value = row[2];
-                document.getElementById('chassisNo').value = row[3];
-                document.getElementById('yearBuild').value = row[4];
-                document.getElementById('registrationNumber').value = row[5];
-                document.getElementById('carOwnership').value = row[6];
-                document.getElementById('addressLocation').value = row[7];
-                document.getElementById('carDealerPrice').value = row[8];
-                document.getElementById('otherPlatformPrice').value = row[9];
-                document.getElementById('debtorOutstanding').value = row[10];
-                document.getElementById('actionInitiative').value = row[11];
+            if (row.length >= 11) { // Ensure we have all fields
+                const formData = {
+                    "CUSTOMER NAME": row[0],
+                    "IC NO.": row[1],
+                    "CAR/BIKE MODEL": row[2],
+                    "CHASSIS NO.": row[3],
+                    "YEAR BUILD": row[4],
+                    "REGISTRATION NUMBER": row[5],
+                    "CAR GRANT / GREEN CARD": row[6],
+                    "ADDRESS": row[7],
+                    "CAR DEALER PRICE (RM)": row[8],
+                    "OTHER PLATFORM PRICE (RM)": row[9],
+                    "DEBTOR OUTSTANDING (RM)": row[10],
+                    "ACTION INITIATIVE": row[11] || '', // Handle REMARKS if it exists
+                    "REMARKS": row[12] || '' // Handle REMARKS if it exists
+                };
 
-                // Optionally, you can submit the form automatically after filling
-                // document.getElementById('vehicleForm').dispatchEvent(new Event('submit'));
+                // Create a new table row for the entry
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${formData["CUSTOMER NAME"]} / ${formData["IC NO."]}</td>
+                    <td>${formData["CAR/BIKE MODEL"]} / ${formData["CHASSIS NO."]} / ${formData["YEAR BUILD"]} / ${formData["REGISTRATION NUMBER"]}</td>
+                    <td>${formData["CAR GRANT / GREEN CARD"]} / ${formData["ADDRESS"]}</td>
+                    <td>${formData["CAR DEALER PRICE (RM)"]} / ${formData["OTHER PLATFORM PRICE (RM)"]} / ${formData["DEBTOR OUTSTANDING (RM)"]}</td>
+                    <td>${formData["ACTION INITIATIVE"]} / ${formData["REMARKS"]}</td>
+                `;
+
+                // Append the new row to the entries body
+                entriesBody.appendChild(newRow);
+
+                // Save the entry for download
+                entries.push(formData); // This allows for downloading all entries in one go
             }
         }
     }
